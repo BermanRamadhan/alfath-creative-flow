@@ -32,9 +32,6 @@ export default async function LoginPage({ searchParams }: { searchParams?: { err
             Login
           </button>
         </form>
-        <div className="surface surface-pad subtle">
-          Seed: `admin/admin123`, `andi/advertiser123`, `budi/cc123`, `citra/cc123`
-        </div>
       </section>
     </main>
   );
