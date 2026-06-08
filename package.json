@@ -1,0 +1,47 @@
+{
+  "name": "al-fath-flow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "python scripts/setup_db.py",
+    "db:setup": "python scripts/setup_db.py",
+    "db:ensure-whatsapp": "node scripts/ensure_user_whatsapp_column.js",
+    "db:ensure-drafts": "node scripts/ensure_request_drafts.js",
+    "prisma:seed": "node prisma/seed.js && node scripts/ensure_materials.js",
+    "materials:ensure": "node scripts/ensure_materials.js",
+    "test:e2e": "node scripts/e2e_flow.js",
+    "test": "node scripts/smoke.js"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "2.4.3",
+    "clsx": "2.1.1",
+    "lucide-react": "0.468.0",
+    "next": "13.5.11",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "@types/node": "20.14.15",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.20",
+    "es-abstract": "^1.23.9",
+    "eslint": "8.57.0",
+    "eslint-config-next": "13.5.11",
+    "postcss": "8.4.41",
+    "prisma": "5.22.0",
+    "tailwindcss": "3.4.10",
+    "typescript": "5.5.4"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js && node scripts/ensure_materials.js"
+  }
+}
