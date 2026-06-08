@@ -22,6 +22,8 @@ npm test
 npm run build
 ```
 
+`npm run build` runs `prisma generate` before `next build`, which is required on Vercel because dependency caching can otherwise leave Prisma Client outdated.
+
 For full E2E, start the app first, then run:
 
 ```bash

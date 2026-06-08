@@ -113,6 +113,7 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Request draft state is modeled separately in `RequestDraft`, so incomplete request input does not create a task until submitted.
 - Product grouping uses normalized product names plus product slugs.
 - Seed script now skips automatically when users already exist, to avoid wiping a non-empty Neon database. Use `RESET_SEED=true` only for an intentional reset.
+- Build script runs `prisma generate && next build` so Vercel dependency caching does not ship an outdated Prisma Client.
 
 ## Workflow Verification
 
