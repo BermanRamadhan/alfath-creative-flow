@@ -103,7 +103,8 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 ## Database & Models
 
 - Runtime ORM: Prisma Client.
-- Local database: SQLite at `prisma/dev.db`.
+- Production-ready database: PostgreSQL via Prisma `provider = "postgresql"`.
+- Previous local SQLite bootstrap remains in `scripts/setup_db.py` for reference, but active `db:setup`/`prisma:migrate` now run `prisma db push`.
 - Bootstrap script: `npm run db:setup`.
 - Existing DB patch script: `npm run db:ensure-whatsapp`.
 - Existing DB patch script for draft support: `npm run db:ensure-drafts`.
@@ -111,6 +112,7 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Bank Konten is modeled per asset via `SubmissionAsset` and `ContentBank`.
 - Request draft state is modeled separately in `RequestDraft`, so incomplete request input does not create a task until submitted.
 - Product grouping uses normalized product names plus product slugs.
+- Seed script now skips automatically when users already exist, to avoid wiping a non-empty Neon database. Use `RESET_SEED=true` only for an intentional reset.
 
 ## Workflow Verification
 

@@ -32,42 +32,7 @@ function materialTypeFromLink(link, fallback) {
 }
 
 async function ensureTable() {
-  await prisma.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS "MaterialReference" (
-      "id" TEXT NOT NULL PRIMARY KEY,
-      "materialType" TEXT NOT NULL,
-      "sourceType" TEXT NOT NULL,
-      "productId" TEXT,
-      "productName" TEXT NOT NULL,
-      "productKey" TEXT NOT NULL,
-      "requestId" TEXT,
-      "submissionId" TEXT,
-      "title" TEXT NOT NULL,
-      "url" TEXT NOT NULL,
-      "platform" TEXT,
-      "note" TEXT,
-      "requesterId" TEXT,
-      "creatorId" TEXT,
-      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT "MaterialReference_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-      CONSTRAINT "MaterialReference_requestId_fkey" FOREIGN KEY ("requestId") REFERENCES "WorkRequest" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-      CONSTRAINT "MaterialReference_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "WorkSubmission" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-      CONSTRAINT "MaterialReference_requesterId_fkey" FOREIGN KEY ("requesterId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-      CONSTRAINT "MaterialReference_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-    );
-  `);
-  for (const statement of [
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_materialType_idx" ON "MaterialReference"("materialType");',
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_sourceType_idx" ON "MaterialReference"("sourceType");',
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_productKey_idx" ON "MaterialReference"("productKey");',
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_requestId_idx" ON "MaterialReference"("requestId");',
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_submissionId_idx" ON "MaterialReference"("submissionId");',
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_requesterId_idx" ON "MaterialReference"("requesterId");',
-    'CREATE INDEX IF NOT EXISTS "MaterialReference_creatorId_idx" ON "MaterialReference"("creatorId");'
-  ]) {
-    await prisma.$executeRawUnsafe(statement);
-  }
+  await prisma.materialReference.count();
 }
 
 async function main() {

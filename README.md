@@ -30,11 +30,13 @@ npm run test:e2e
 
 ## Vercel Deployment Note
 
-The local MVP uses SQLite at `prisma/dev.db`. For Vercel production, use a separate managed database because Vercel serverless deployments do not provide a persistent writable SQLite database.
+This app is configured for Postgres via Prisma. Use a managed database such as Neon for Vercel production.
 
 Recommended production path:
 
 1. Create a managed Postgres database, preferably Neon via Vercel Marketplace.
 2. Set production `DATABASE_URL` in Vercel.
-3. Migrate Prisma schema/provider from SQLite to Postgres before production deploy.
+3. Run `npx prisma db push` once to create tables.
 4. Seed production users with fresh passwords and do not reuse local seed credentials.
+
+`npm run prisma:seed` skips automatically when users already exist. To intentionally reset seed data, run it with `RESET_SEED=true`.

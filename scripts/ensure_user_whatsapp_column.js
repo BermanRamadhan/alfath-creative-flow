@@ -3,18 +3,12 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  const columns = await prisma.$queryRawUnsafe('PRAGMA table_info("User")');
-  const hasColumn = columns.some((column) => column.name === "whatsappNumber");
-  if (!hasColumn) {
-    await prisma.$executeRawUnsafe('ALTER TABLE "User" ADD COLUMN "whatsappNumber" TEXT');
-  }
+  await prisma.user.updateMany({ where: { username: "admin", whatsappNumber: null }, data: { whatsappNumber: "6281234567890" } });
+  await prisma.user.updateMany({ where: { username: "andi", whatsappNumber: null }, data: { whatsappNumber: "628111222333" } });
+  await prisma.user.updateMany({ where: { username: "budi", whatsappNumber: null }, data: { whatsappNumber: "628222333444" } });
+  await prisma.user.updateMany({ where: { username: "citra", whatsappNumber: null }, data: { whatsappNumber: "628333444555" } });
 
-  await prisma.$executeRawUnsafe('UPDATE "User" SET "whatsappNumber" = ? WHERE "username" = ? AND "whatsappNumber" IS NULL', "6281234567890", "admin");
-  await prisma.$executeRawUnsafe('UPDATE "User" SET "whatsappNumber" = ? WHERE "username" = ? AND "whatsappNumber" IS NULL', "628111222333", "andi");
-  await prisma.$executeRawUnsafe('UPDATE "User" SET "whatsappNumber" = ? WHERE "username" = ? AND "whatsappNumber" IS NULL', "628222333444", "budi");
-  await prisma.$executeRawUnsafe('UPDATE "User" SET "whatsappNumber" = ? WHERE "username" = ? AND "whatsappNumber" IS NULL', "628333444555", "citra");
-
-  console.log(hasColumn ? "User.whatsappNumber already exists" : "Added User.whatsappNumber");
+  console.log("User.whatsappNumber values ensured");
 }
 
 main()

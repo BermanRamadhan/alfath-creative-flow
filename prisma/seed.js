@@ -31,6 +31,13 @@ function subHours(hours) {
 }
 
 async function main() {
+  const existingUsers = await prisma.user.count();
+  const resetSeed = process.env.RESET_SEED === "true";
+  if (existingUsers > 0 && !resetSeed) {
+    console.log(`Seed skipped: database already has ${existingUsers} users. Set RESET_SEED=true to reset seed data.`);
+    return;
+  }
+
   await prisma.assetFeedback.deleteMany();
   await prisma.contentBank.deleteMany();
   await prisma.reviewLog.deleteMany();
