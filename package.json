@@ -12,6 +12,7 @@
     "db:setup": "prisma db push",
     "db:ensure-whatsapp": "node scripts/ensure_user_whatsapp_column.js",
     "db:ensure-drafts": "node scripts/ensure_request_drafts.js",
+    "db:import-local": "node scripts/import_sqlite_export_to_neon.js",
     "prisma:seed": "node prisma/seed.js && node scripts/ensure_materials.js",
     "materials:ensure": "node scripts/ensure_materials.js",
     "test:e2e": "node scripts/e2e_flow.js",

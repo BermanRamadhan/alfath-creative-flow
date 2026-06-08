@@ -42,3 +42,13 @@ Recommended production path:
 4. Seed production users with fresh passwords and do not reuse local seed credentials.
 
 `npm run prisma:seed` skips automatically when users already exist. To intentionally reset seed data, run it with `RESET_SEED=true`.
+
+## Local SQLite Data Import
+
+If an old local SQLite export exists at `.tmp/sqlite-local-export.json`, import it into the configured Postgres database with:
+
+```bash
+npm run db:import-local
+```
+
+The importer backs up the current Postgres contents into `.tmp/` before replacing them.
