@@ -2,11 +2,11 @@ import "server-only";
 
 import { db } from "@/lib/db";
 import { createContentRequest, createLpRequest } from "@/lib/workflow";
-import { deserializeLinks, numberFromForm, parseLinks, serializeLinks, stringFromForm } from "@/lib/utils";
+import { deserializeLinks, numberFromForm, parseJakartaDateTimeInput, parseLinks, serializeLinks, stringFromForm } from "@/lib/utils";
 
 function optionalDate(value: string) {
   if (!value) return null;
-  const date = new Date(value);
+  const date = parseJakartaDateTimeInput(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 

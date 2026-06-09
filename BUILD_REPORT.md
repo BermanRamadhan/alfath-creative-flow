@@ -68,6 +68,8 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Added mobile action panel styling hooks for Task detail Start/Submit/Return Revision and Review detail ACC/Revisi/Klarifikasi blocks.
 - Hardened mobile CSS against horizontal overflow with `min-width: 0`, shrink-safe card internals, compact form/button spacing, compact charts, and bottom-nav safe-area padding.
 - Verified external asset/material links still render as absolute external URLs and do not prepend the local app origin.
+- Standardized app time handling to Indonesia time (`Asia/Jakarta`) with 24-hour display/input formatting.
+- Deadline request, draft deadline, edit request deadline, CC OFF expected time, feedback test date, dashboard "hari ini", task "hari ini", and workflow 7-day report now use WIB-aware helpers instead of server-local timezone parsing.
 
 ## Latest Mobile UI Implementation Plan
 
@@ -194,6 +196,12 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
   - Red dot check was read-only: visible bottom-nav dots were present only on actionable menus for each logged-in role; non-actionable menus such as Dashboard had no dot.
   - External link check sampled `/bank-konten` and `/materials`: target blank links resolved to `https://...` URLs and no sampled link started with `http://127.0.0.1:3001`.
   - `npm test` and `npm run test:e2e` were intentionally not rerun in this phase to avoid creating new QA data in the active Neon database.
+- Latest WIB/24-hour time verification:
+  - `npm run lint`: passed.
+  - `npm run build`: passed.
+  - Helper verification: `2026-06-09T14:30` parses to `2026-06-09T07:30:00.000Z` and renders back as `2026-06-09T14:30` for WIB input.
+  - HTTP verification without creating workflow data: `/requests/new/content` rendered deadline value like `2026-06-10T10:37`; `/settings` for an active CC session rendered `expectedUntil` like `2026-06-09T10:37`; both matched `YYYY-MM-DDTHH:mm`.
+  - `npm test` and `npm run test:e2e` were intentionally not rerun in this phase to avoid creating new QA data in the active Neon database.
 - `npm audit --omit=dev`: failed due remaining Next.js 13.x advisories. The available audit fix upgrades to Next 16, which is a breaking upgrade and not compatible with the current Node 18.16 local runtime without broader environment changes.
 
 ## Bugs Found & Fixed
@@ -216,6 +224,7 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Prisma Client generation hit `EPERM` when the production server was still running and locking `query_engine-windows.dll.node`. Fixed by stopping the workspace server, regenerating Prisma Client, then starting the server again.
 - Advertiser task list could show CC `Start` forms for pending/revision tasks even though the API did not allow advertiser work actions. Fixed the list to show work actions only for admin/CC, and show pending edit only for requester/admin.
 - Mobile `/materials` initially overflowed horizontally at 390px because nested grid/flex children inside mobile cards kept `min-width:auto`. Fixed by adding shrink-safe `min-width:0`, explicit mobile-card grid columns, and wrapping safeguards for card meta/content.
+- `datetime-local` values could be interpreted in the server timezone on Vercel because browser input strings do not include timezone. Fixed by parsing these values explicitly as `Asia/Jakarta` and formatting all app date/time displays with 24-hour WIB output.
 
 ## Known Limitations
 

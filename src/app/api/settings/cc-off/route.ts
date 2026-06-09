@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { setCreatorOff } from "@/lib/workflow";
-import { stringFromForm } from "@/lib/utils";
+import { parseJakartaDateTimeInput, stringFromForm } from "@/lib/utils";
 
 export async function POST(request: Request) {
   const user = await requireRole(["CC"]);
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   await setCreatorOff(user.id, {
     reason: stringFromForm(form.get("reason")),
     note: stringFromForm(form.get("note")),
-    expectedUntil: expected ? new Date(expected) : null
+    expectedUntil: expected ? parseJakartaDateTimeInput(expected) : null
   });
   return NextResponse.redirect(new URL("/settings", url), { status: 303 });
 }

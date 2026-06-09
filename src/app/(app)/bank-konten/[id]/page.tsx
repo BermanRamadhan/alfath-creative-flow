@@ -4,7 +4,7 @@ import { TestStatusBadge } from "@/components/badge";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ASSET_KIND_LABELS, PLATFORM_LABELS, TEST_STATUSES, TEST_STATUS_LABELS } from "@/lib/constants";
-import { deserializeLinks, externalHref, fullDate, money, scoreLabel } from "@/lib/utils";
+import { dateOnlyInputValue, deserializeLinks, externalHref, fullDate, money, scoreLabel } from "@/lib/utils";
 
 export default async function BankKontenDetailPage({ params }: { params: { id: string } }) {
   const user = await requireUser();
@@ -142,7 +142,7 @@ export default async function BankKontenDetailPage({ params }: { params: { id: s
                   </option>
                 ))}
               </select>
-              <input className="input" name="testDate" type="date" />
+              <input className="input" name="testDate" type="date" defaultValue={dateOnlyInputValue(new Date())} />
               <input className="input" name="testResult" placeholder="Bagus / Biasa / Jelek" />
               <div className="form-grid">
                 {[1, 2, 3, 4, 5].map((score) => (

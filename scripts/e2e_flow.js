@@ -3,6 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const baseUrl = process.env.E2E_BASE_URL ?? "http://127.0.0.1:3001";
 const base = new URL(baseUrl);
+const APP_TIME_ZONE = "Asia/Jakarta";
 
 function assert(condition, message) {
   if (!condition) {
@@ -54,6 +55,20 @@ function localLocation(value) {
     return `${url.pathname}${url.search}`;
   }
   return value;
+}
+
+function jakartaDateInputValue(value) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: APP_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(value);
+  const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}T${map.hour}:${map.minute}`;
 }
 
 class Client {
@@ -128,7 +143,7 @@ async function main() {
   const draftProductName = `QA Draft Flow ${stamp}`;
   const editedDraftProductName = `QA Draft Edited ${stamp}`;
   const slug = productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  const deadline = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+  const deadline = jakartaDateInputValue(new Date(Date.now() + 24 * 60 * 60 * 1000));
 
   const andi = new Client("advertiser");
   const budi = new Client("cc");

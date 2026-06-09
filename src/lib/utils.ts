@@ -6,6 +6,28 @@ import {
   WORK_LOG_LABELS
 } from "@/lib/constants";
 
+export const APP_TIME_ZONE = "Asia/Jakarta";
+
+const JAKARTA_OFFSET_MS = 7 * 60 * 60 * 1000;
+const INPUT_DATE_TIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/;
+const INPUT_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+function jakartaDateTimeParts(value: Date | string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: APP_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(date);
+
+  return Object.fromEntries(parts.map((part) => [part.type, part.value]));
+}
+
 export function normalizeProductName(value: string) {
   return value
     .normalize("NFKD")
@@ -32,30 +54,74 @@ export function titleCase(value: string) {
 export function compactDate(value: Date | string) {
   const date = new Date(value);
   return new Intl.DateTimeFormat("id-ID", {
+    timeZone: APP_TIME_ZONE,
     day: "2-digit",
     month: "short",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    hourCycle: "h23"
   }).format(date);
 }
 
 export function fullDate(value: Date | string) {
   const date = new Date(value);
   return new Intl.DateTimeFormat("id-ID", {
+    timeZone: APP_TIME_ZONE,
     day: "2-digit",
     month: "long",
     year: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    hourCycle: "h23"
   }).format(date);
 }
 
 export function dateInputValue(value?: Date | string | null) {
   if (!value) return "";
-  const date = new Date(value);
-  const offset = date.getTimezoneOffset();
-  const local = new Date(date.getTime() - offset * 60_000);
-  return local.toISOString().slice(0, 16);
+  const parts = jakartaDateTimeParts(value);
+  if (!parts) return "";
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
+export function dateOnlyInputValue(value?: Date | string | null) {
+  if (!value) return "";
+  const parts = jakartaDateTimeParts(value);
+  if (!parts) return "";
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+export function parseJakartaDateTimeInput(value?: string | null) {
+  const match = value?.trim().match(INPUT_DATE_TIME_PATTERN);
+  if (!match) return new Date("");
+  const [, yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw] = match;
+  const year = Number(yearRaw);
+  const month = Number(monthRaw);
+  const day = Number(dayRaw);
+  const hour = Number(hourRaw);
+  const minute = Number(minuteRaw);
+  const second = Number(secondRaw ?? "0");
+  const date = new Date(Date.UTC(year, month - 1, day, hour, minute, second) - JAKARTA_OFFSET_MS);
+  if (dateInputValue(date) !== `${yearRaw}-${monthRaw}-${dayRaw}T${hourRaw}:${minuteRaw}`) return new Date("");
+  return date;
+}
+
+export function parseJakartaDateInput(value?: string | null) {
+  const match = value?.trim().match(INPUT_DATE_PATTERN);
+  if (!match) return new Date("");
+  return parseJakartaDateTimeInput(`${match[1]}-${match[2]}-${match[3]}T00:00`);
+}
+
+export function startOfJakartaDay(value: Date | string = new Date()) {
+  const day = dateOnlyInputValue(value);
+  return day ? parseJakartaDateTimeInput(`${day}T00:00`) : new Date("");
+}
+
+export function startOfTodayJakarta() {
+  return startOfJakartaDay(new Date());
+}
+
+export function addJakartaDays(value: Date, days: number) {
+  return new Date(value.getTime() + days * 24 * 60 * 60 * 1000);
 }
 
 export function formatDuration(seconds?: number | null) {

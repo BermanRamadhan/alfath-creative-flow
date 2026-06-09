@@ -4,13 +4,14 @@ import { StatusBadge } from "@/components/badge";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PLATFORM_LABELS, REQUEST_TYPE_LABELS, STATUS_LABELS, STYLE_LABELS, USE_FRAME_LABELS } from "@/lib/constants";
-import { compactDate, formatDuration } from "@/lib/utils";
+import { compactDate, formatDuration, startOfTodayJakarta } from "@/lib/utils";
 
 export default async function TasksPage({ searchParams }: { searchParams?: { status?: string; product?: string } }) {
   const user = await requireUser();
   const status = searchParams?.status;
   const product = searchParams?.product;
   const canWork = ["ADMIN", "CC"].includes(user.role);
+  const todayStart = startOfTodayJakarta();
   const where = {
     ...(user.role === "CC" ? { OR: [{ creatorId: user.id }, { status: "BELUM" }] } : {}),
     ...(user.role === "ADVERTISER" ? { requesterId: user.id } : {}),
@@ -28,7 +29,7 @@ export default async function TasksPage({ searchParams }: { searchParams?: { sta
       where: {
         ...(user.role === "CC" ? { creatorId: user.id } : {}),
         status: "BERES",
-        updatedAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }
+        updatedAt: { gte: todayStart }
       }
     }),
     db.workRequest.count({ where: { ...(user.role === "CC" ? { OR: [{ creatorId: user.id }, { status: "BELUM" }] } : {}), status: "BELUM" } }),
@@ -36,7 +37,7 @@ export default async function TasksPage({ searchParams }: { searchParams?: { sta
     db.workTimeLog.findMany({
       where: {
         ...(user.role === "CC" ? { creatorId: user.id } : {}),
-        startedAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }
+        startedAt: { gte: todayStart }
       }
     })
   ]);

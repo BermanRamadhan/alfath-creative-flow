@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { createFeedback } from "@/lib/workflow";
-import { stringFromForm } from "@/lib/utils";
+import { parseJakartaDateInput, stringFromForm } from "@/lib/utils";
 
 function optionalNumber(form: FormData, key: string) {
   const raw = stringFromForm(form.get(key));
@@ -18,7 +18,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
   await createFeedback(user.id, params.id, {
     testStatus: stringFromForm(form.get("testStatus")),
     testedPlatform: stringFromForm(form.get("testedPlatform")),
-    testDate: dateRaw ? new Date(dateRaw) : null,
+    testDate: dateRaw ? parseJakartaDateInput(dateRaw) : null,
     testResult: stringFromForm(form.get("testResult")),
     score1: optionalNumber(form, "score1"),
     score2: optionalNumber(form, "score2"),

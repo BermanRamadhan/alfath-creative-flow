@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { OFF_REASON_LABELS, OFF_REASONS } from "@/lib/constants";
+import { dateInputValue } from "@/lib/utils";
 
 export default async function SettingsPage() {
   const user = await requireUser();
@@ -66,7 +67,7 @@ export default async function SettingsPage() {
                     </option>
                   ))}
                 </select>
-                <input className="input" name="expectedUntil" type="datetime-local" />
+                <input className="input" name="expectedUntil" type="datetime-local" defaultValue={dateInputValue(new Date())} />
                 <textarea className="textarea" name="note" placeholder="Note opsional" />
                 <button className="btn warning" type="submit">
                   Set OFF

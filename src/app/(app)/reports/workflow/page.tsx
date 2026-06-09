@@ -4,11 +4,12 @@ import { StatusBadge } from "@/components/badge";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { STATUS_LABELS } from "@/lib/constants";
-import { formatDuration } from "@/lib/utils";
+import { addJakartaDays, APP_TIME_ZONE, formatDuration, startOfTodayJakarta } from "@/lib/utils";
 
 export default async function WorkflowReportPage() {
   await requireUser();
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const todayStart = startOfTodayJakarta();
+  const weekAgo = addJakartaDays(todayStart, -6);
   const [createdWeek, completedWeek, overdue, requests, logs, submissions] = await Promise.all([
     db.workRequest.count({ where: { createdAt: { gte: weekAgo } } }),
     db.workRequest.count({ where: { status: "BERES", updatedAt: { gte: weekAgo } } }),
@@ -27,12 +28,9 @@ export default async function WorkflowReportPage() {
     tone: status === "BERES" ? "green" : status === "REVISI_DIKEMBALIKAN" ? "red" : status === "SUDAH" ? "blue" : "amber"
   })) as { label: string; value: number; tone: "green" | "red" | "blue" | "amber" }[];
   const days = Array.from({ length: 7 }).map((_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (6 - index));
-    date.setHours(0, 0, 0, 0);
-    const next = new Date(date);
-    next.setDate(date.getDate() + 1);
-    const label = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short" }).format(date);
+    const date = addJakartaDays(todayStart, index - 6);
+    const next = addJakartaDays(date, 1);
+    const label = new Intl.DateTimeFormat("id-ID", { timeZone: APP_TIME_ZONE, day: "2-digit", month: "short" }).format(date);
     return {
       label,
       created: requests.filter((request) => request.createdAt >= date && request.createdAt < next).length,

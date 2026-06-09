@@ -3,7 +3,7 @@ import { MetricStrip } from "@/components/metric-strip";
 import { StatusBadge, TestStatusBadge } from "@/components/badge";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { compactDate, formatDuration } from "@/lib/utils";
+import { compactDate, formatDuration, startOfTodayJakarta } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -13,6 +13,7 @@ export default async function DashboardPage() {
       : user.role === "CC"
         ? { OR: [{ creatorId: user.id }, { status: "BELUM" }] }
         : {};
+  const todayStart = startOfTodayJakarta();
 
   const [totalRequests, activeTasks, waitingReview, overdueTasks, bankItems, winners, recentTasks, recentBank, todayLogs] =
     await Promise.all([
@@ -53,7 +54,7 @@ export default async function DashboardPage() {
       db.workTimeLog.findMany({
         where: {
           ...(user.role === "CC" ? { creatorId: user.id } : {}),
-          startedAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }
+          startedAt: { gte: todayStart }
         }
       })
     ]);

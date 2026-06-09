@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { updatePendingContentRequest, updatePendingLpRequest } from "@/lib/workflow";
-import { numberFromForm, parseLinks, stringFromForm } from "@/lib/utils";
+import { numberFromForm, parseJakartaDateTimeInput, parseLinks, stringFromForm } from "@/lib/utils";
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const user = await requireRole(["ADMIN", "ADVERTISER"]);
@@ -24,7 +24,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         style: stringFromForm(form.get("style")),
         angle: stringFromForm(form.get("angle")),
         referenceLinks: parseLinks(form.get("referenceLinks")),
-        deadlineAt: new Date(stringFromForm(form.get("deadlineAt"))),
+        deadlineAt: parseJakartaDateTimeInput(stringFromForm(form.get("deadlineAt"))),
         additionalNotes: stringFromForm(form.get("additionalNotes"))
       });
     } else {
@@ -37,7 +37,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         rawOrReferenceLinks: parseLinks(form.get("rawOrReferenceLinks")),
         angle: stringFromForm(form.get("angle")),
         hook: stringFromForm(form.get("hook")),
-        deadlineAt: new Date(stringFromForm(form.get("deadlineAt"))),
+        deadlineAt: parseJakartaDateTimeInput(stringFromForm(form.get("deadlineAt"))),
         additionalNotes: stringFromForm(form.get("additionalNotes"))
       });
     }
