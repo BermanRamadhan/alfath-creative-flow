@@ -85,7 +85,7 @@ export default async function WorkflowReportPage() {
         <TrendBars title="Created per day" caption="Request baru dalam 7 hari terakhir." data={days.map((day) => ({ label: day.label, value: day.created, tone: "blue" }))} />
         <TrendBars title="Completed per day" caption="Task beres dalam 7 hari terakhir." data={days.map((day) => ({ label: day.label, value: day.completed, tone: "green" }))} />
       </section>
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -109,6 +109,25 @@ export default async function WorkflowReportPage() {
           </tbody>
         </table>
       </div>
+      <section className="mobile-card-list" aria-label="Task workflow mobile">
+        {requests.slice(0, 20).map((request) => (
+          <article className="mobile-card" key={request.id}>
+            <div className="mobile-card-head">
+              <div className="mobile-card-title">
+                <strong>{request.productName}</strong>
+                <span className="subtle truncate">{request.title}</span>
+              </div>
+              <StatusBadge status={request.status} deadlineAt={request.deadlineAt} />
+            </div>
+            <div className="mobile-card-meta">
+              <div>
+                Revisi
+                <strong>{request.reviewLogs.filter((log) => log.decision === "REVISION_REQUESTED").length}</strong>
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
     </div>
   );
 }

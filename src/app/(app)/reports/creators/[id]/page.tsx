@@ -96,7 +96,7 @@ export default async function CreatorReportPage({ params }: { params: { id: stri
           ]}
         />
       </section>
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -126,6 +126,32 @@ export default async function CreatorReportPage({ params }: { params: { id: stri
           </tbody>
         </table>
       </div>
+      <section className="mobile-card-list" aria-label="Task creator report mobile">
+        {creator.claimedRequests.map((task) => (
+          <article className="mobile-card" key={task.id}>
+            <div className="mobile-card-head">
+              <div className="mobile-card-title">
+                <strong>{task.productName}</strong>
+                <span className="subtle truncate">{task.title}</span>
+              </div>
+              <StatusBadge status={task.status} deadlineAt={task.deadlineAt} />
+            </div>
+            <div className="mobile-card-meta">
+              <div>
+                Output
+                <strong>
+                  {task.videoAmount} video / {task.imageAmount} gambar
+                </strong>
+              </div>
+            </div>
+            <div className="mobile-card-actions">
+              <Link className="btn primary" href={`/tasks/${task.id}`}>
+                Task
+              </Link>
+            </div>
+          </article>
+        ))}
+      </section>
     </div>
   );
 }

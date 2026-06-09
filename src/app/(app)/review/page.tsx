@@ -30,7 +30,7 @@ export default async function ReviewPage() {
           <p className="page-copy">ACC akan membuat item Bank Konten per asset final. Revisi harus punya catatan.</p>
         </div>
       </header>
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -78,6 +78,50 @@ export default async function ReviewPage() {
           </tbody>
         </table>
       </div>
+
+      <section className="mobile-card-list" aria-label="Daftar review mobile">
+        {tasks.map((task) => (
+          <article className="mobile-card" key={task.id}>
+            <div className="mobile-card-head">
+              <div className="mobile-card-title">
+                <strong>{task.productName}</strong>
+                <span className="subtle truncate">{task.title}</span>
+              </div>
+              <StatusBadge status={task.status} deadlineAt={task.deadlineAt} />
+            </div>
+            <div className="mobile-card-meta">
+              <div>
+                Update
+                <strong>{compactDate(task.updatedAt)}</strong>
+              </div>
+              <div>
+                Creator
+                <strong>{task.creator?.displayName ?? "-"}</strong>
+              </div>
+            </div>
+            {task.submissions[0] ? (
+              <div className="mobile-card-actions">
+                {task.submissions[0].assets.slice(0, 3).map((asset) => (
+                  <a className="btn" href={externalHref(asset.link)} target="_blank" rel="noreferrer" key={asset.id}>
+                    {ASSET_KIND_LABELS[asset.assetKind] ?? asset.assetKind}
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <span className="subtle">Belum ada submission</span>
+            )}
+            {task.reviewLogs[0] ? <span className="subtle truncate">Last: {task.reviewLogs[0].reviewNote}</span> : null}
+            <div className="mobile-card-actions">
+              <Link className="btn primary" href={`/review/${task.id}`}>
+                Review
+              </Link>
+              <Link className="btn" href={`/tasks/${task.id}`}>
+                Task
+              </Link>
+            </div>
+          </article>
+        ))}
+      </section>
     </div>
   );
 }

@@ -22,7 +22,7 @@ export default async function ProductsPage() {
           <p className="page-copy">Produk otomatis tergroup dari nama request. Admin bisa menambahkan metadata.</p>
         </div>
       </header>
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -63,6 +63,47 @@ export default async function ProductsPage() {
           </tbody>
         </table>
       </div>
+      <section className="mobile-card-list" aria-label="Daftar produk mobile">
+        {products.map((product) => {
+          const productKey = product.normalizedName.replace(/[^a-z0-9]+/g, "-");
+          return (
+            <article className="mobile-card" key={product.id}>
+              <div className="mobile-card-head">
+                <div className="mobile-card-title">
+                  <strong>{product.name}</strong>
+                  <span className="subtle">{product.normalizedName}</span>
+                </div>
+                <span className="badge">{product._count.bankItems} asset</span>
+              </div>
+              <div className="mobile-card-meta">
+                <div>
+                  Category
+                  <strong>{product.category ?? "-"}</strong>
+                </div>
+                <div>
+                  Niche
+                  <strong>{product.niche ?? "-"}</strong>
+                </div>
+                <div>
+                  Request
+                  <strong>{product._count.requests}</strong>
+                </div>
+              </div>
+              <div className="mobile-card-actions">
+                <Link className="btn primary" href={`/products/${product.id}`}>
+                  Detail
+                </Link>
+                <Link className="btn" href={`/bank-konten?product=${productKey}`}>
+                  Bank
+                </Link>
+                <Link className="btn" href={`/reports/products/${product.id}`}>
+                  Report
+                </Link>
+              </div>
+            </article>
+          );
+        })}
+      </section>
     </div>
   );
 }

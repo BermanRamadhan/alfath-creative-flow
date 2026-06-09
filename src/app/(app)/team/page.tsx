@@ -21,7 +21,7 @@ export default async function TeamPage() {
           User Baru
         </Link>
       </header>
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -64,6 +64,47 @@ export default async function TeamPage() {
           </tbody>
         </table>
       </div>
+      <section className="mobile-card-list" aria-label="Daftar user mobile">
+        {users.map((user) => {
+          const ccOff = user.role === "CC" && user.statusLogs[0]?.status === "OFF" && !user.statusLogs[0].endedAt;
+          return (
+            <article className="mobile-card" key={user.id}>
+              <div className="mobile-card-head">
+                <div className="mobile-card-title">
+                  <strong>{user.displayName}</strong>
+                  <span className="subtle">@{user.username}</span>
+                </div>
+                {user.isActive ? <span className="badge green">Aktif</span> : <span className="badge red">Nonaktif</span>}
+              </div>
+              <div className="mobile-card-meta">
+                <div>
+                  Role
+                  <strong>{ROLE_LABELS[user.role] ?? user.role}</strong>
+                </div>
+                <div>
+                  WhatsApp
+                  <strong>{user.whatsappNumber || "Belum ada"}</strong>
+                </div>
+                <div>
+                  Status CC
+                  <strong>
+                    {user.role === "CC"
+                      ? ccOff
+                        ? `OFF - ${OFF_REASON_LABELS[user.statusLogs[0].reason ?? ""] ?? user.statusLogs[0].reason}`
+                        : "ON"
+                      : "-"}
+                  </strong>
+                </div>
+              </div>
+              <div className="mobile-card-actions">
+                <Link className="btn primary" href={`/team/${user.id}`}>
+                  Ubah
+                </Link>
+              </div>
+            </article>
+          );
+        })}
+      </section>
     </div>
   );
 }

@@ -68,7 +68,7 @@ export default async function ReviewDetailPage({ params }: { params: { id: strin
           </div>
 
           {task.status === "SUDAH" ? (
-            <div className="surface surface-pad stack">
+            <div className="surface surface-pad stack mobile-action-panel">
               <h2 className="asset-title">Keputusan review</h2>
               <div className="button-row">
                 <form action={`/api/review/${task.id}/acc`} method="post">
@@ -87,7 +87,7 @@ export default async function ReviewDetailPage({ params }: { params: { id: strin
           ) : null}
 
           {task.status === "REVISI_DIKEMBALIKAN" ? (
-            <form className="surface surface-pad stack" action={`/api/review/${task.id}/clarify`} method="post">
+            <form className="surface surface-pad stack mobile-action-panel" action={`/api/review/${task.id}/clarify`} method="post">
               <h2 className="asset-title">Klarifikasi revisi</h2>
               <textarea className="textarea" name="clarificationNote" required placeholder="Perjelas revisi agar status kembali menjadi REVISI" />
               <button className="btn primary" type="submit">

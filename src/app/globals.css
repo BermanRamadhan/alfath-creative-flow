@@ -119,6 +119,7 @@ select {
 
 .nav-item {
   display: flex;
+  position: relative;
   align-items: center;
   gap: 8px;
   min-height: 30px;
@@ -133,6 +134,24 @@ select {
 .nav-item.active {
   color: var(--ink);
   background: var(--panel-strong);
+}
+
+.nav-icon-wrap {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.nav-dot {
+  position: absolute;
+  top: -4px;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--panel);
+  border-radius: 50%;
+  background: #d12d2d;
 }
 
 .main-area {
@@ -161,6 +180,10 @@ select {
   text-transform: uppercase;
 }
 
+.mobile-brand {
+  display: none;
+}
+
 .user-chip {
   display: flex;
   align-items: center;
@@ -185,7 +208,7 @@ select {
 
 .page-title {
   margin: 0;
-  font-size: clamp(18px, 1.45vw, 24px);
+  font-size: 22px;
   font-weight: 850;
   line-height: 1;
 }
@@ -261,6 +284,7 @@ select {
 
 .table-wrap {
   overflow-x: auto;
+  max-width: 100%;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--panel);
@@ -303,6 +327,17 @@ select {
 .stack {
   display: grid;
   gap: 8px;
+}
+
+.stack > *,
+.two-col > *,
+.form-grid > *,
+.page-head > *,
+.mobile-card,
+.mobile-card-list,
+.surface,
+.field {
+  min-width: 0;
 }
 
 .two-col {
@@ -698,23 +733,404 @@ select {
   padding: 0;
 }
 
+.mobile-bottom-nav,
+.mobile-drawer-layer,
+.mobile-card-list {
+  display: none;
+}
+
+.mobile-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 8px;
+  overflow: hidden;
+}
+
+.mobile-card > * {
+  min-width: 0;
+}
+
+.mobile-card-head {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mobile-card-title {
+  min-width: 0;
+}
+
+.mobile-card-title strong,
+.truncate {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-card-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.mobile-card-meta > * {
+  min-width: 0;
+}
+
+.mobile-card-meta strong {
+  display: block;
+  color: var(--ink);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.mobile-card-actions {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.mobile-action-panel {
+  display: grid;
+  gap: 7px;
+}
+
 @media (max-width: 900px) {
   .app-shell {
-    grid-template-columns: 1fr;
+    display: block;
+    min-height: 100dvh;
   }
 
   .sidebar {
-    position: relative;
-    height: auto;
-    padding: 8px;
+    display: none;
   }
 
-  .nav-list {
+  .main-area {
+    min-height: 100dvh;
+  }
+
+  .topbar {
+    min-height: 42px;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  .mobile-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--brand);
+    font-size: 12px;
+    font-weight: 850;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    font-size: 11px;
+  }
+
+  .user-chip {
+    min-width: 0;
+    gap: 5px;
+    font-size: 10px;
+  }
+
+  .user-chip > span {
+    display: block;
+    max-width: 172px;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content-frame {
+    width: 100%;
+    padding: 8px 8px calc(86px + env(safe-area-inset-bottom));
+  }
+
+  .stack {
+    gap: 7px;
+  }
+
+  .page-head {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .page-title {
+    font-size: 18px;
+    line-height: 1.08;
+  }
+
+  .page-kicker {
+    margin-bottom: 2px;
+    font-size: 9px;
+  }
+
+  .page-head > .button-row {
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .page-head > .button-row .btn {
+    flex: 0 0 auto;
+  }
+
+  .metric-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .metric-cell {
+    min-height: 44px;
+    padding: 7px;
+  }
+
+  .metric-value {
+    margin-top: 4px;
+    font-size: 16px;
+  }
+
+  .surface-pad {
+    padding: 8px;
+  }
+
+  .toolbar {
+    margin: 4px 0;
+  }
+
   .two-col,
-  .form-grid {
+  .form-grid,
+  .duration-grid {
     grid-template-columns: 1fr;
+  }
+
+  .input,
+  .textarea,
+  .select {
+    min-height: 34px;
+    font-size: 12px;
+  }
+
+  .textarea {
+    min-height: 72px;
+  }
+
+  .btn {
+    min-height: 32px;
+    padding: 6px 8px;
+  }
+
+  .button-row {
+    gap: 4px;
+  }
+
+  .field.full > .button-row .btn,
+  .field.full > .button-row a,
+  .field.full > .button-row button {
+    flex: 1 1 118px;
+  }
+
+  .desktop-table {
+    display: none;
+  }
+
+  .mobile-card-list {
+    display: grid;
+    gap: 7px;
+  }
+
+  .mobile-card-actions .btn,
+  .mobile-card-actions form,
+  .mobile-card-actions button {
+    flex: 1 1 92px;
+  }
+
+  .mobile-card-actions form .btn {
+    width: 100%;
+  }
+
+  .card-grid,
+  .chart-grid,
+  .legend-list.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-panel {
+    min-height: auto;
+    padding: 8px;
+  }
+
+  .donut-layout {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .donut {
+    width: 76px;
+  }
+
+  .donut-center {
+    width: 46px;
+  }
+
+  .trend-bars {
+    grid-auto-columns: minmax(22px, 1fr);
+    gap: 4px;
+    min-height: 88px;
+  }
+
+  .trend-item {
+    height: 88px;
+    font-size: 9px;
+  }
+
+  .asset-card {
+    padding: 8px;
+  }
+
+  .asset-title {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .compact-note {
+    max-width: 100%;
+  }
+
+  .mobile-action-panel,
+  .surface.surface-pad.form-grid,
+  .surface.surface-pad.stack {
+    scroll-margin-bottom: 92px;
+  }
+
+  .mobile-bottom-nav {
+    position: fixed;
+    z-index: 30;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 1px;
+    border-top: 1px solid var(--line);
+    background: color-mix(in srgb, var(--panel) 96%, transparent);
+    padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 24px rgba(22, 32, 27, 0.08);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-nav-item {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 48px;
+    place-items: center;
+    gap: 2px;
+    border: 0;
+    border-radius: 7px;
+    color: var(--muted);
+    background: transparent;
+    padding: 5px 3px;
+    font-size: 9px;
+    font-weight: 820;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .mobile-nav-item span:last-child {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-nav-item.active {
+    color: var(--brand);
+    background: color-mix(in srgb, var(--brand) 10%, var(--panel));
+  }
+
+  .mobile-drawer-layer {
+    position: fixed;
+    z-index: 40;
+    inset: 0;
+    display: block;
+  }
+
+  .mobile-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(12, 20, 16, 0.42);
+  }
+
+  .mobile-drawer {
+    position: absolute;
+    right: 8px;
+    bottom: calc(70px + env(safe-area-inset-bottom));
+    left: 8px;
+    max-height: min(70dvh, 440px);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(22, 32, 27, 0.24);
+  }
+
+  .mobile-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 2px 7px;
+  }
+
+  .mobile-drawer-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .mobile-drawer-list .nav-item {
+    min-height: 40px;
+    border: 1px solid var(--line-soft);
+    background: var(--panel-strong);
+  }
+}
+
+@media (max-width: 430px) {
+  .user-chip > span {
+    max-width: 138px;
+  }
+
+  .mobile-card-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    font-size: 10px;
   }
 }

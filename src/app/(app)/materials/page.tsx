@@ -129,7 +129,7 @@ export default async function MaterialsPage({
             </div>
           </form>
 
-          <div className="table-wrap">
+          <div className="table-wrap desktop-table">
             <table className="data-table">
               <thead>
                 <tr>
@@ -179,6 +179,53 @@ export default async function MaterialsPage({
               </tbody>
             </table>
           </div>
+          <section className="mobile-card-list" aria-label="Daftar bahan mobile">
+            {materials.map((item) => (
+              <article className="mobile-card" key={item.id}>
+                <div className="mobile-card-head">
+                  <div className="mobile-card-title">
+                    <strong>{item.title}</strong>
+                    <span className="subtle truncate">{item.note ?? item.url}</span>
+                  </div>
+                  <Badge label={MATERIAL_TYPE_LABELS[item.materialType] ?? item.materialType} tone={materialTone(item.materialType)} />
+                </div>
+                <div className="mobile-card-meta">
+                  <div>
+                    Produk
+                    <strong>{item.productName}</strong>
+                  </div>
+                  <div>
+                    Sumber
+                    <strong>{MATERIAL_SOURCE_LABELS[item.sourceType] ?? item.sourceType}</strong>
+                  </div>
+                  <div>
+                    Owner
+                    <strong>{item.creator?.displayName ?? item.requester?.displayName ?? user.displayName}</strong>
+                  </div>
+                  <div>
+                    Tanggal
+                    <strong>{compactDate(item.createdAt)}</strong>
+                  </div>
+                </div>
+                <div className="mobile-card-actions">
+                  <a className="btn primary" href={externalHref(item.url)} target="_blank" rel="noreferrer">
+                    <ExternalLink size={13} />
+                    Buka
+                  </a>
+                  {item.requestId ? (
+                    <Link className="btn" href={`/tasks/${item.requestId}`}>
+                      Task
+                    </Link>
+                  ) : null}
+                  {item.product ? (
+                    <Link className="btn" href={`/products/${item.product.id}`}>
+                      Produk
+                    </Link>
+                  ) : null}
+                </div>
+              </article>
+            ))}
+          </section>
         </div>
 
         <aside className="stack">

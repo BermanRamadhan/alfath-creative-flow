@@ -125,7 +125,7 @@ export default async function TaskDetailPage({ params }: { params: { id: string 
           </div>
 
           {canWork && ["BELUM", "REVISI"].includes(task.status) ? (
-            <form className="surface surface-pad stack" action={`/api/tasks/${task.id}/start`} method="post">
+            <form className="surface surface-pad stack mobile-action-panel" action={`/api/tasks/${task.id}/start`} method="post">
               <h2 className="asset-title">{task.status === "REVISI" ? "Mulai revisi" : "Mulai kerja"}</h2>
               <p className="subtle">Klik start untuk claim task dan mulai timer.</p>
               <button className="btn primary" type="submit">
@@ -135,7 +135,7 @@ export default async function TaskDetailPage({ params }: { params: { id: string 
           ) : null}
 
           {canWork && task.status === "DIKERJAKAN" ? (
-            <form className="surface surface-pad form-grid" action={`/api/tasks/${task.id}/submit`} method="post">
+            <form className="surface surface-pad form-grid mobile-action-panel" action={`/api/tasks/${task.id}/submit`} method="post">
               <div className="field full">
                 <h2 className="asset-title">Submit hasil</h2>
                 <p className="subtle">Isi link per asset. Setiap baris akan masuk sebagai asset terpisah saat ACC.</p>
@@ -174,7 +174,7 @@ export default async function TaskDetailPage({ params }: { params: { id: string 
           ) : null}
 
           {canWork && task.status === "REVISI" ? (
-            <form className="surface surface-pad stack" action={`/api/tasks/${task.id}/return-revision`} method="post">
+            <form className="surface surface-pad stack mobile-action-panel" action={`/api/tasks/${task.id}/return-revision`} method="post">
               <h2 className="asset-title">Return revision</h2>
               <textarea className="textarea" name="returnNote" required placeholder="Jelaskan bagian revisi yang belum jelas" />
               <button className="btn warning" type="submit">

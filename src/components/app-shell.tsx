@@ -1,49 +1,54 @@
 import {
-  Archive,
-  BarChart3,
-  ClipboardList,
-  Home,
-  FolderSearch,
   LogOut,
-  Package,
-  PlusCircle,
-  Settings,
-  Users,
-  CheckSquare
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { ROLE_LABELS, type Role } from "@/lib/constants";
-import { canAccess } from "@/lib/auth";
+import { DesktopNav, MobileNav, type AppNavItem } from "@/components/app-nav";
+import type { NavAlerts, NavAlertKey } from "@/lib/nav-types";
 
 type NavItem = {
+  id: NavAlertKey;
   href: string;
   label: string;
   roles: Role[];
-  icon: LucideIcon;
+  icon: string;
 };
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", roles: ["ADMIN", "ADVERTISER", "CC"], icon: Home },
-  { href: "/requests/new", label: "Request Baru", roles: ["ADMIN", "ADVERTISER"], icon: PlusCircle },
-  { href: "/tasks", label: "Task Content", roles: ["ADMIN", "CC"], icon: ClipboardList },
-  { href: "/review", label: "Review", roles: ["ADMIN", "ADVERTISER"], icon: CheckSquare },
-  { href: "/bank-konten", label: "Bank Konten", roles: ["ADMIN", "ADVERTISER", "CC"], icon: Archive },
-  { href: "/materials", label: "Mentahan", roles: ["ADMIN", "ADVERTISER", "CC"], icon: FolderSearch },
-  { href: "/products", label: "Produk", roles: ["ADMIN", "ADVERTISER", "CC"], icon: Package },
-  { href: "/reports", label: "Report", roles: ["ADMIN", "ADVERTISER", "CC"], icon: BarChart3 },
-  { href: "/team", label: "Team", roles: ["ADMIN"], icon: Users },
-  { href: "/settings", label: "Settings", roles: ["ADMIN", "ADVERTISER", "CC"], icon: Settings }
+  { id: "dashboard", href: "/dashboard", label: "Dashboard", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "Home" },
+  { id: "request", href: "/requests/new", label: "Request", roles: ["ADMIN", "ADVERTISER"], icon: "PlusCircle" },
+  { id: "task", href: "/tasks", label: "Task", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "ClipboardList" },
+  { id: "review", href: "/review", label: "Review", roles: ["ADMIN", "ADVERTISER"], icon: "CheckSquare" },
+  { id: "bank", href: "/bank-konten", label: "Bank Konten", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "Archive" },
+  { id: "materials", href: "/materials", label: "Mentahan", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "FolderSearch" },
+  { id: "products", href: "/products", label: "Produk", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "Package" },
+  { id: "reports", href: "/reports", label: "Report", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "BarChart3" },
+  { id: "team", href: "/team", label: "Team", roles: ["ADMIN"], icon: "Users" },
+  { id: "settings", href: "/settings", label: "Settings", roles: ["ADMIN", "ADVERTISER", "CC"], icon: "Settings" }
 ];
+
+function canView(role: string, roles: Role[]) {
+  return roles.includes(role as Role);
+}
 
 export function AppShell({
   children,
-  user
+  user,
+  alerts
 }: {
   children: React.ReactNode;
   user: { displayName: string; username: string; role: string; darkMode: boolean };
+  alerts: NavAlerts;
 }) {
-  const visibleNav = navItems.filter((item) => canAccess(user.role, item.roles));
+  const visibleNav: AppNavItem[] = navItems
+    .filter((item) => canView(user.role, item.roles))
+    .map((item) => ({
+      id: item.id,
+      href: item.href,
+      label: item.label,
+      icon: item.icon,
+      alert: alerts[item.id]
+    }));
   return (
     <div className={user.darkMode ? "dark" : ""}>
       <div className="app-shell">
@@ -55,20 +60,14 @@ export function AppShell({
               <span className="brand-subtitle">CreativeOps</span>
             </span>
           </Link>
-          <nav className="nav-list">
-            {visibleNav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link className="nav-item" href={item.href} key={item.href}>
-                  <Icon size={15} />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <DesktopNav items={visibleNav} />
         </aside>
         <main className="main-area">
           <header className="topbar">
+            <Link className="mobile-brand" href="/dashboard">
+              <span className="brand-mark">AF</span>
+              <span>Flow</span>
+            </Link>
             <div className="user-chip">
               <span>
                 <strong>{user.displayName}</strong> - {ROLE_LABELS[user.role] ?? user.role}
@@ -82,6 +81,7 @@ export function AppShell({
           </header>
           <div className="content-frame">{children}</div>
         </main>
+        <MobileNav items={visibleNav} role={user.role} />
       </div>
     </div>
   );

@@ -61,6 +61,21 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Added reusable request form components so new request, draft continuation, and pending edit screens share the same LP/content fields and validation names.
 - Added `RequestDraft` database model, non-destructive DB patch script, API routes for draft save/submit/delete, and API routes for pending request update/delete.
 - E2E workflow now covers draft save, draft continuation, draft submit, pending request edit, and pending request delete before running the full CC/review/ACC flow.
+- Mobile UI implementation completed based on `MOBILE_UI_IMPLEMENTATION_PLAN.md`.
+- Added server-side role-aware nav alert helper for actionable red dots: request drafts/editable pending request, task queue/revision/overdue work, review waiting/clarification, Bank Konten `READY_TEST`, Team missing WhatsApp/overdue CC OFF, and Settings missing WhatsApp.
+- Added compact mobile app shell with hidden desktop sidebar under mobile breakpoint, compact topbar, role-aware bottom nav, mobile drawer for secondary menus, and red dot indicators.
+- Added shared mobile card/list pattern for Dashboard recent tasks, Task list, Review list, Request Drafts, Bank Konten table mode, Materials, Products, Team, Workflow Report, Product Report, and Creator Report.
+- Added mobile action panel styling hooks for Task detail Start/Submit/Return Revision and Review detail ACC/Revisi/Klarifikasi blocks.
+- Hardened mobile CSS against horizontal overflow with `min-width: 0`, shrink-safe card internals, compact form/button spacing, compact charts, and bottom-nav safe-area padding.
+- Verified external asset/material links still render as absolute external URLs and do not prepend the local app origin.
+
+## Latest Mobile UI Implementation Plan
+
+1. Audit `MOBILE_UI_IMPLEMENTATION_PLAN.md`, current app shell, global CSS, and workflow pages.
+2. Implement role-aware nav alerts, mobile bottom nav, mobile drawer, compact topbar, and desktop-safe sidebar behavior.
+3. Convert mobile-heavy table pages into compact cards without removing desktop tables.
+4. Verify Task, Review, Request/Draft/Edit, Bank Konten, Materials, Reports, Team, Settings, and external links.
+5. Run lint/build, browser-check 390px and 430px role flows, update this report, then commit and push.
 
 ## Seed Accounts
 
@@ -169,6 +184,16 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
   - `npm run test:e2e`: passed against `http://127.0.0.1:3001`.
   - E2E verified: advertiser saves incomplete draft, opens draft detail, completes draft, submits draft into a pending request, edits that pending request, deletes that pending request, then completes the full request -> CC start/submit -> revision -> clarification -> ACC -> Bank Konten flow.
   - Browser verified `/requests/new/content`, `/requests/drafts`, `/requests/drafts/[id]`, `/requests/[id]/edit`, and `/tasks?status=BELUM`: save/continue/submit/delete/edit controls render correctly, and advertiser task list no longer exposes CC Start forms.
+- Latest mobile UI verification:
+  - `npm run lint`: passed.
+  - `npm run build`: passed.
+  - Browser 390px admin: `/dashboard` and `/team` rendered mobile bottom nav `Dashboard Request Task Review Bank Lainnya`, sidebar hidden, mobile cards shown, overflow `0`.
+  - Browser 430px advertiser: `/requests/new`, `/review`, and `/bank-konten` rendered role-aware bottom nav `Dashboard Request Review Bank Report Lainnya`, sidebar hidden, Review/Bank mobile cards shown, overflow `0`.
+  - Browser 390px CC: `/tasks`, `/materials`, `/reports`, and `/settings` rendered role-aware bottom nav `Dashboard Task Bahan Report Setting Lainnya`, sidebar hidden, Task/Materials mobile cards shown, overflow `0`.
+  - Desktop check 1280px: `/dashboard` kept desktop sidebar visible, mobile bottom nav hidden, overflow `0`.
+  - Red dot check was read-only: visible bottom-nav dots were present only on actionable menus for each logged-in role; non-actionable menus such as Dashboard had no dot.
+  - External link check sampled `/bank-konten` and `/materials`: target blank links resolved to `https://...` URLs and no sampled link started with `http://127.0.0.1:3001`.
+  - `npm test` and `npm run test:e2e` were intentionally not rerun in this phase to avoid creating new QA data in the active Neon database.
 - `npm audit --omit=dev`: failed due remaining Next.js 13.x advisories. The available audit fix upgrades to Next 16, which is a breaking upgrade and not compatible with the current Node 18.16 local runtime without broader environment changes.
 
 ## Bugs Found & Fixed
@@ -190,6 +215,7 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Full-flow test initially exposed two testability issues: local redirects sometimes used `localhost` while the server listens on `127.0.0.1`, and product display title-casing changed `QA` to `Qa`. Fixed the E2E script to normalize local redirects and compare product text case-insensitively.
 - Prisma Client generation hit `EPERM` when the production server was still running and locking `query_engine-windows.dll.node`. Fixed by stopping the workspace server, regenerating Prisma Client, then starting the server again.
 - Advertiser task list could show CC `Start` forms for pending/revision tasks even though the API did not allow advertiser work actions. Fixed the list to show work actions only for admin/CC, and show pending edit only for requester/admin.
+- Mobile `/materials` initially overflowed horizontally at 390px because nested grid/flex children inside mobile cards kept `min-width:auto`. Fixed by adding shrink-safe `min-width:0`, explicit mobile-card grid columns, and wrapping safeguards for card meta/content.
 
 ## Known Limitations
 
@@ -200,6 +226,7 @@ Build Al-Fath Flow as an internal workflow webapp based on `al-fath-flow-master-
 - Draft saving is explicit via the `Simpan Draft` button; there is no background autosave on every keystroke yet.
 - UI is server-rendered and form-based for MVP reliability; dynamic inline asset rows can be improved later.
 - Product grouping normalizes names, but there is no merge UI yet for historical duplicates beyond normalized auto-grouping.
+- Mobile browser verification for this phase was read-only against the active database; no new workflow QA data was created.
 
 ## How To Run
 

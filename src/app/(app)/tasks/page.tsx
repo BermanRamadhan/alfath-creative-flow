@@ -71,7 +71,7 @@ export default async function TasksPage({ searchParams }: { searchParams?: { sta
         ]}
       />
 
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -132,6 +132,63 @@ export default async function TasksPage({ searchParams }: { searchParams?: { sta
           </tbody>
         </table>
       </div>
+
+      <section className="mobile-card-list" aria-label="Daftar task mobile">
+        {tasks.map((task) => {
+          const latestSubmission = task.submissions.at(-1);
+          return (
+            <article className="mobile-card" key={task.id}>
+              <div className="mobile-card-head">
+                <div className="mobile-card-title">
+                  <strong>{task.productName}</strong>
+                  <span className="subtle truncate">{task.title}</span>
+                </div>
+                <StatusBadge status={task.status} deadlineAt={task.deadlineAt} />
+              </div>
+              <div className="mobile-card-meta">
+                <div>
+                  Deadline
+                  <strong>{compactDate(task.deadlineAt)}</strong>
+                </div>
+                <div>
+                  Output
+                  <strong>{task.requestType === "LP" ? "1 LP" : `${task.videoAmount} video / ${task.imageAmount} gambar`}</strong>
+                </div>
+                <div>
+                  Platform
+                  <strong>{PLATFORM_LABELS[task.postPlatform] ?? task.postPlatform}</strong>
+                </div>
+                <div>
+                  Creator
+                  <strong>{task.creator?.displayName ?? "Belum diklaim"}</strong>
+                </div>
+              </div>
+              {latestSubmission ? (
+                <span className="subtle">
+                  Submit: {latestSubmission.submittedVideoAmount ?? 0} video / {latestSubmission.submittedImageAmount ?? 0} gambar
+                </span>
+              ) : null}
+              <div className="mobile-card-actions">
+                <Link className="btn" href={`/tasks/${task.id}`}>
+                  Detail
+                </Link>
+                {["ADMIN", "ADVERTISER"].includes(user.role) && task.status === "BELUM" && (user.role === "ADMIN" || task.requesterId === user.id) ? (
+                  <Link className="btn" href={`/requests/${task.id}/edit`}>
+                    Edit
+                  </Link>
+                ) : null}
+                {canWork && ["BELUM", "REVISI"].includes(task.status) ? (
+                  <form action={`/api/tasks/${task.id}/start`} method="post">
+                    <button className="btn primary" type="submit">
+                      {task.status === "REVISI" ? "Start Revisi" : "Start"}
+                    </button>
+                  </form>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
+      </section>
     </div>
   );
 }

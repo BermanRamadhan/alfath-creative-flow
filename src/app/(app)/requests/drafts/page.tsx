@@ -24,7 +24,7 @@ export default async function RequestDraftsPage() {
         </Link>
       </header>
 
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -64,6 +64,47 @@ export default async function RequestDraftsPage() {
           </tbody>
         </table>
       </div>
+      <section className="mobile-card-list" aria-label="Draft request mobile">
+        {drafts.map((draft) => (
+          <article className="mobile-card" key={draft.id}>
+            <div className="mobile-card-head">
+              <div className="mobile-card-title">
+                <strong>{draft.productName || "Belum diisi"}</strong>
+                <span className="subtle">{REQUEST_TYPE_LABELS[draft.requestType] ?? draft.requestType}</span>
+              </div>
+              <span className="badge amber">Draft</span>
+            </div>
+            <div className="mobile-card-meta">
+              <div>
+                Update
+                <strong>{compactDate(draft.updatedAt)}</strong>
+              </div>
+              <div>
+                Deadline
+                <strong>{draft.deadlineAt ? fullDate(draft.deadlineAt) : "Belum diisi"}</strong>
+              </div>
+              <div>
+                Requester
+                <strong>{draft.requester.displayName}</strong>
+              </div>
+              <div>
+                Platform
+                <strong>{draft.postPlatform || "-"}</strong>
+              </div>
+            </div>
+            <div className="mobile-card-actions">
+              <Link className="btn primary" href={`/requests/drafts/${draft.id}`}>
+                Lanjutkan
+              </Link>
+              <form action={`/api/request-drafts/${draft.id}/delete`} method="post">
+                <button className="btn danger" type="submit">
+                  Hapus
+                </button>
+              </form>
+            </div>
+          </article>
+        ))}
+      </section>
       {!drafts.length ? <span className="subtle">Belum ada draft request.</span> : null}
     </div>
   );

@@ -104,7 +104,7 @@ export default async function DashboardPage() {
               Semua task
             </Link>
           </div>
-          <div className="table-wrap">
+          <div className="table-wrap desktop-table">
             <table className="data-table">
               <thead>
                 <tr>
@@ -139,6 +139,34 @@ export default async function DashboardPage() {
               </tbody>
             </table>
           </div>
+          <section className="mobile-card-list" aria-label="Deadline dan task mobile">
+            {recentTasks.map((task) => (
+              <article className="mobile-card" key={task.id}>
+                <div className="mobile-card-head">
+                  <div className="mobile-card-title">
+                    <strong>{task.productName}</strong>
+                    <span className="subtle truncate">{task.title}</span>
+                  </div>
+                  <StatusBadge status={task.status} deadlineAt={task.deadlineAt} />
+                </div>
+                <div className="mobile-card-meta">
+                  <div>
+                    Deadline
+                    <strong>{compactDate(task.deadlineAt)}</strong>
+                  </div>
+                  <div>
+                    Owner
+                    <strong>{task.creator?.displayName ?? task.requester.displayName}</strong>
+                  </div>
+                </div>
+                <div className="mobile-card-actions">
+                  <Link className="btn primary" href={`/tasks/${task.id}`}>
+                    Detail
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </section>
         </div>
 
         <div className="stack">

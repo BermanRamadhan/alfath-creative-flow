@@ -107,7 +107,7 @@ export default async function ProductReportPage({ params }: { params: { id: stri
           ]}
         />
       </section>
-      <div className="table-wrap">
+      <div className="table-wrap desktop-table">
         <table className="data-table">
           <thead>
             <tr>
@@ -139,6 +139,34 @@ export default async function ProductReportPage({ params }: { params: { id: stri
           </tbody>
         </table>
       </div>
+      <section className="mobile-card-list" aria-label="Asset product report mobile">
+        {product.bankItems.map((item) => (
+          <article className="mobile-card" key={item.id}>
+            <div className="mobile-card-head">
+              <div className="mobile-card-title">
+                <strong>{item.title}</strong>
+                <span className="subtle">{item.creator?.displayName ?? "-"}</span>
+              </div>
+              <TestStatusBadge status={item.testStatus} />
+            </div>
+            <div className="mobile-card-meta">
+              <div>
+                Score
+                <strong>{scoreLabel(item.scoreTotal)}</strong>
+              </div>
+              <div>
+                Feedback
+                <strong>{item.feedbacks.length}</strong>
+              </div>
+            </div>
+            <div className="mobile-card-actions">
+              <Link className="btn primary" href={`/bank-konten/${item.id}`}>
+                Asset
+              </Link>
+            </div>
+          </article>
+        ))}
+      </section>
     </div>
   );
 }

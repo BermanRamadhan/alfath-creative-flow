@@ -134,55 +134,96 @@ export default async function BankKontenPage({
           ))}
         </section>
       ) : (
-        <div className="table-wrap">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Produk</th>
-                <th>Asset</th>
-                <th>Tipe</th>
-                <th>Platform</th>
-                <th>Status Tes</th>
-                <th>Skor</th>
-                <th>Creator</th>
-                <th>Feedback</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <strong>{item.productName}</strong>
-                    <div className="subtle">{compactDate(item.createdAt)}</div>
-                  </td>
-                  <td>{item.title}</td>
-                  <td>{ASSET_KIND_LABELS[item.assetKind] ?? item.assetKind}</td>
-                  <td>{PLATFORM_LABELS[item.platform] ?? item.platform}</td>
-                  <td>
-                    <TestStatusBadge status={item.testStatus} />
-                  </td>
-                  <td>{scoreLabel(item.scoreTotal)}</td>
-                  <td>{item.creator?.displayName ?? "-"}</td>
-                  <td>{item.feedbackCount}</td>
-                  <td>
-                    <div className="button-row">
-                      <a className="btn primary" href={externalHref(item.mainLink)} target="_blank" rel="noreferrer">
-                        Open
-                      </a>
-                      <Link className="btn" href={`/bank-konten/${item.id}`}>
-                        Detail
-                      </Link>
-                      <Link className="btn" href={`/tasks/${item.requestId}`}>
-                        Task
-                      </Link>
-                    </div>
-                  </td>
+        <>
+          <div className="table-wrap desktop-table">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Produk</th>
+                  <th>Asset</th>
+                  <th>Tipe</th>
+                  <th>Platform</th>
+                  <th>Status Tes</th>
+                  <th>Skor</th>
+                  <th>Creator</th>
+                  <th>Feedback</th>
+                  <th>Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <strong>{item.productName}</strong>
+                      <div className="subtle">{compactDate(item.createdAt)}</div>
+                    </td>
+                    <td>{item.title}</td>
+                    <td>{ASSET_KIND_LABELS[item.assetKind] ?? item.assetKind}</td>
+                    <td>{PLATFORM_LABELS[item.platform] ?? item.platform}</td>
+                    <td>
+                      <TestStatusBadge status={item.testStatus} />
+                    </td>
+                    <td>{scoreLabel(item.scoreTotal)}</td>
+                    <td>{item.creator?.displayName ?? "-"}</td>
+                    <td>{item.feedbackCount}</td>
+                    <td>
+                      <div className="button-row">
+                        <a className="btn primary" href={externalHref(item.mainLink)} target="_blank" rel="noreferrer">
+                          Open
+                        </a>
+                        <Link className="btn" href={`/bank-konten/${item.id}`}>
+                          Detail
+                        </Link>
+                        <Link className="btn" href={`/tasks/${item.requestId}`}>
+                          Task
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <section className="mobile-card-list" aria-label="Bank konten mobile">
+            {items.map((item) => (
+              <article className="mobile-card" key={item.id}>
+                <div className="mobile-card-head">
+                  <div className="mobile-card-title">
+                    <strong>{item.productName}</strong>
+                    <span className="subtle truncate">{item.title}</span>
+                  </div>
+                  <TestStatusBadge status={item.testStatus} />
+                </div>
+                <div className="split-line">
+                  <span className="badge">{ASSET_KIND_LABELS[item.assetKind] ?? item.assetKind}</span>
+                  <span className="badge">{PLATFORM_LABELS[item.platform] ?? item.platform}</span>
+                  <span className="badge">{scoreLabel(item.scoreTotal)}</span>
+                </div>
+                <div className="mobile-card-meta">
+                  <div>
+                    Creator
+                    <strong>{item.creator?.displayName ?? "-"}</strong>
+                  </div>
+                  <div>
+                    Feedback
+                    <strong>{item.feedbackCount}</strong>
+                  </div>
+                </div>
+                <div className="mobile-card-actions">
+                  <a className="btn primary" href={externalHref(item.mainLink)} target="_blank" rel="noreferrer">
+                    Buka
+                  </a>
+                  <Link className="btn" href={`/bank-konten/${item.id}`}>
+                    Detail
+                  </Link>
+                  <Link className="btn" href={`/tasks/${item.requestId}`}>
+                    Task
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </section>
+        </>
       )}
     </div>
   );
